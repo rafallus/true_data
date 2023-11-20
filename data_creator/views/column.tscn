@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://dhq2cf05gyfsh"]
+
+[ext_resource type="Script" path="res://addons/true_data/data_creator/views/column.gd" id="1_2lu25"]
+
+[node name="Column" type="VBoxContainer"]
+custom_minimum_size = Vector2(32, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1120.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+script = ExtResource("1_2lu25")
+
+[node name="Options" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="OptionsBox" type="HBoxContainer" parent="Options"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ConfigureButton" type="Button" parent="Options/OptionsBox"]
+layout_mode = 2
+flat = true
+
+[node name="Header" type="Label" parent="."]
+layout_mode = 2
+mouse_filter = 0
+text = "Header"
+text_overrun_behavior = 1
+
+[connection signal="mouse_entered" from="Options" to="." method="_on_options_mouse_entered"]
+[connection signal="mouse_exited" from="Options" to="." method="_on_options_mouse_exited"]
