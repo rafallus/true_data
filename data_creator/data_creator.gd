@@ -20,8 +20,8 @@ func save() -> void:
 ####======= Callbacks =====================================####
 
 func _enter_tree() -> void:
-	ERR.CONN(child_entered_tree, _on_child_entered_tree)
-	ERR.CONN(child_exiting_tree, _on_child_exiting_tree)
+	Err.CONN(child_entered_tree, _on_child_entered_tree)
+	Err.CONN(child_exiting_tree, _on_child_exiting_tree)
 
 
 func _exit_tree() -> void:
@@ -35,7 +35,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
 	for n in get_children():
 		if n.get_script() != DataType:
-			ERR.CHK_APPEND(
+			Err.CHK_APPEND(
 				warnings.push_back("Child with incorrect script was found."))
 			break
 	return warnings
@@ -53,7 +53,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 ####======= Signal Callbacks ==============================####
 
 func _on_child_entered_tree(node: Node) -> void:
-	ERR.CONN(node.script_changed, update_configuration_warnings)
+	Err.CONN(node.script_changed, update_configuration_warnings)
 	if node.get_script() != DataType:
 		update_configuration_warnings()
 

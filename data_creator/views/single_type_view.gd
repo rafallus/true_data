@@ -48,7 +48,7 @@ func _ready() -> void:
 func __fill_columns() -> void:
 	if not _type.data_script:
 		return
-	var props := DATA.get_script_storage_props(_type.data_script)
+	var props := Data.get_script_storage_props(_type.data_script)
 	var iprop := 0
 	for prop in props:
 		var column: Control

@@ -34,11 +34,11 @@ func set_type(type: Node) -> void:
 	ncategories.text = str(_type.get_child_count())
 	type_options.selected = _type.type
 	__set_type_script_button()
-	ERR.CONN(_type.data_script_changed, _on_type_data_script_changed)
-	ERR.CONN(_type.type_changed, _on_type_changed)
-	ERR.CONN(_type.child_entered_tree, _on_type_child_entered_tree)
-	ERR.CONN(_type.child_exiting_tree, _on_type_child_exiting_tree, CONNECT_DEFERRED)
-	ERR.CONN(_type.renamed, _on_type_renamed)
+	Err.CONN(_type.data_script_changed, _on_type_data_script_changed)
+	Err.CONN(_type.type_changed, _on_type_changed)
+	Err.CONN(_type.child_entered_tree, _on_type_child_entered_tree)
+	Err.CONN(_type.child_exiting_tree, _on_type_child_exiting_tree, CONNECT_DEFERRED)
+	Err.CONN(_type.renamed, _on_type_renamed)
 
 
 ###############################################################

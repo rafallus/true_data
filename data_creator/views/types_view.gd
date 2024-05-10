@@ -36,9 +36,9 @@ func edit(node: DataCreator) -> void:
 		_creator.child_order_changed.disconnect(_on_creator_child_order_changed)
 	_creator = node
 	__queue_fill_types()
-	ERR.CONN(_creator.child_entered_tree, _on_creator_child_entered)
-	ERR.CONN(_creator.child_exiting_tree, _on_creator_child_exiting)
-	ERR.CONN(_creator.child_order_changed, _on_creator_child_order_changed)
+	Err.CONN(_creator.child_entered_tree, _on_creator_child_entered)
+	Err.CONN(_creator.child_exiting_tree, _on_creator_child_exiting)
+	Err.CONN(_creator.child_order_changed, _on_creator_child_order_changed)
 
 
 func clear() -> void:
@@ -82,9 +82,9 @@ func __fill_types() -> void:
 		else:
 			row = preload("res://addons/true_data/data_creator/views/types_row.tscn").instantiate()
 			types_rows_box.add_child(row)
-			ERR.CONN(row.script_pressed, _on_type_script_pressed)
-			ERR.CONN(row.edit_pressed, _on_type_edit_pressed)
-			ERR.CONN(row.delete_pressed, _on_type_delete_pressed)
+			Err.CONN(row.script_pressed, _on_type_script_pressed)
+			Err.CONN(row.edit_pressed, _on_type_edit_pressed)
+			Err.CONN(row.delete_pressed, _on_type_delete_pressed)
 		row.set_type(n)
 		ntypes += 1
 	for i in range(_creator.get_child_count(), types_rows_box.get_child_count()):
@@ -125,8 +125,8 @@ func _on_type_script_pressed(type: DataType) -> void:
 	_current_type = type
 	file_dialog.filters = PackedStringArray(["*.gd ; GDScript"])
 	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-	ERR.CONN(file_dialog.file_selected, _on_script_file_selected)
-	ERR.CONN(file_dialog.canceled, _on_file_dialog_canceled)
+	Err.CONN(file_dialog.file_selected, _on_script_file_selected)
+	Err.CONN(file_dialog.canceled, _on_file_dialog_canceled)
 	file_dialog.popup_centered(Vector2i(600,540))
 
 

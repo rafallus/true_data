@@ -95,8 +95,8 @@ func get_storage_props(in_props: Array[Dictionary], flags: int = 0,
 ## Properties listed in [param white_list] are forced to be considered as
 ## storage properties even if it would be discarded by default or from the
 ## [param flags] value.
-func obj_props_to_strings(object: Object, flags: int = 0, properties: Array = [],
-		white_list: Array = []) -> PackedStringArray:
+func obj_props_to_strings(object: Object, flags: int = 0, properties: Array[Dictionary] = [],
+		white_list: PackedStringArray = PackedStringArray()) -> PackedStringArray:
 	var props := get_storage_props(object.get_property_list(), flags, white_list) \
 		if properties.is_empty() else properties
 	var strings := PackedStringArray()
@@ -105,7 +105,7 @@ func obj_props_to_strings(object: Object, flags: int = 0, properties: Array = []
 		if type in SUPPORTED_TYPES_TEXT:
 			var prop_name: String = prop.name
 			var string := "%s : %s" % [prop.name, str(object.get(prop_name))]
-			ERR.CHK_APPEND(strings.push_back(string))
+			Err.CHK_APPEND(strings.push_back(string))
 	return strings
 
 
@@ -121,7 +121,7 @@ func obj_props_from_strings(object: Object, strings: PackedStringArray,
 		var parts := string.split(":", false, 1)
 		var prop := StringName(parts[0].strip_edges())
 		if prop in skips:
-			ERR.CHK_APPEND(remaining.push_back(string))
+			Err.CHK_APPEND(remaining.push_back(string))
 		else:
 			var str_val := parts[1].strip_edges()
 			var val: Variant = object.get(prop)
