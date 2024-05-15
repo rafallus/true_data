@@ -19,8 +19,8 @@ signal delete_pressed(type: Node)
 
 var _type: Node
 
-###############################################################
-####======= Public Functions ==============================####
+# =============================================================
+# ========= Public Functions ==================================
 
 func set_type(type: Node) -> void:
 	if _type:
@@ -41,8 +41,8 @@ func set_type(type: Node) -> void:
 	Err.CONN(_type.renamed, _on_type_renamed)
 
 
-###############################################################
-####======= Callbacks =====================================####
+# =============================================================
+# ========= Callbacks =========================================
 
 func _ready() -> void:
 	script_remove.icon = EditorInterface.get_editor_theme().get_icon(&"Clear", &"EditorIcons")
@@ -50,12 +50,12 @@ func _ready() -> void:
 	$Delete.icon = EditorInterface.get_editor_theme().get_icon(&"Remove", &"EditorIcons")
 
 
-###############################################################
-####======= Virtual Methods ===============================####
+# =============================================================
+# ========= Virtual Methods ===================================
 
 
-###############################################################
-####======= Private Functions =============================####
+# =============================================================
+# ========= Private Functions =================================
 
 func __set_type_script_button() -> void:
 	if _type.data_script:
@@ -66,8 +66,8 @@ func __set_type_script_button() -> void:
 		script_remove.disabled = true
 
 
-###############################################################
-####======= Signal Callbacks ==============================####
+# =============================================================
+# ========= Signal Callbacks ==================================
 
 func _on_type_data_script_changed() -> void:
 	__set_type_script_button()
