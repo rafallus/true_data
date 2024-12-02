@@ -39,7 +39,7 @@ func _get(property: StringName) -> Variant:
 
 func _get_property_list() -> Array[Dictionary]:
 	if data_script:
-		var props := DATA.get_script_editor_props(data_script)
+		var props := Data.get_script_editor_props(data_script)
 		if _props.is_empty():
 			for prop in props:
 				var prop_name := StringName(prop.name)
