@@ -29,6 +29,15 @@ const SUPPORTED_TYPES_TEXT := [
 # =============================================================
 # ========= Public Functions ==================================
 
+func is_parent_script(script: GDScript, inherits: GDScript) -> bool:
+	var parent := script.get_base_script()
+	while parent:
+		if parent == inherits:
+			return true
+		parent = parent.get_base_script()
+	return false
+
+
 ## Returns script properties that are displayed in the inspector.
 func get_script_editor_props(script: Script) -> Array[Dictionary]:
 	var props: Array[Dictionary] = []
