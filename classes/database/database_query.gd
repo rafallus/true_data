@@ -1,5 +1,6 @@
 ##
 ##
+@tool
 class_name DatabaseQuery
 extends RefCounted
 
@@ -15,6 +16,7 @@ class DBOperation:
 	var field: StringName
 	var elements: Array[DBOperationElements]
 
+
 const MODULE := &"Database"
 
 var _selection: Array[StringName] = []
@@ -22,14 +24,24 @@ var _operations: Array = []
 var _or_array := []
 var _index := 0
 var _index_or := 0
+var _data: Dictionary[Variant, Dictionary] = {}
+var _id_name := &"id"
 
 # =============================================================
 # ========= Public Functions ==================================
+
+func get_values() -> Array[Dictionary]:
+	return _data.values()
+
 
 func select(fields: Array[StringName]) -> DatabaseQuery:
 	assert(_selection.is_empty(), "Selection has been already done in query.")
 	_selection = fields
 	return self
+
+
+func get_selection() -> Array[StringName]:
+	return _selection
 
 
 func where(field: StringName, op: Variant.Operator, value: Variant) -> DatabaseQuery:
@@ -65,8 +77,13 @@ func or_where(field: StringName, op: Variant.Operator, value: Variant) -> Databa
 	return self
 
 
-func commit() -> void:
+func with_id(id: StringName) -> void:
+	_id_name = id
+
+
+func commit() -> DatabaseQuery:
 	commited.emit()
+	return self
 
 
 func clear() -> void:
@@ -75,6 +92,7 @@ func clear() -> void:
 	_or_array.clear()
 	_index = 0
 	_index_or = 0
+	_data.clear()
 
 
 func get_eval_fields() -> Array:
@@ -102,6 +120,11 @@ func get_eval_fields() -> Array:
 	return fields
 
 
+func start_record() -> void:
+	_index = 0
+	_index_or = 0
+
+
 func eval_next(data: Variant) -> bool:
 	var operation: DBOperation = null
 	var is_or := false
@@ -109,8 +132,14 @@ func eval_next(data: Variant) -> bool:
 		operation = _operations[_index]
 	else:
 		var a: Array = _operations[_index]
-		operation = a[_index_or]
-		is_or = true
+		if _index_or >= a.size():
+			# Is this point ever reached?
+			_index += 1
+			operation = _operations[_index]
+			_index_or = 0
+		else:
+			operation = a[_index_or]
+			is_or = true
 	var result := true
 	for e in operation.elements:
 		if not e.callback.is_valid():
@@ -126,6 +155,10 @@ func eval_next(data: Variant) -> bool:
 	else:
 		_index += 1
 	return result
+
+
+func get_id_name() -> StringName:
+	return _id_name
 
 
 # =============================================================
@@ -153,7 +186,9 @@ func __select_function(op: Variant.Operator) -> Callable:
 			return __greater
 		OP_GREATER_EQUAL:
 			return __greater_equal
-	return __null
+		_:
+			Log.warning("Non supported operation in DB query.", ERR_INVALID_PARAMETER, MODULE)
+			return __null
 
 
 func __equal(v1, v2) -> bool:
