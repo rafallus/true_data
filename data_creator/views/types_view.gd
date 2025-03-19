@@ -13,6 +13,7 @@ const DataCreator: GDScript = preload("res://addons/true_data/data_creator/data_
 const DataType: GDScript = preload("res://addons/true_data/data_creator/data_type.gd")
 
 @export var add_type: Button
+@export var add_type_from_script: Button
 @export var new_type_name: LineEdit
 @export var types_rows_scroll: ScrollContainer
 @export var file_dialog: FileDialog
@@ -23,7 +24,7 @@ var undoredo: EditorUndoRedoManager
 
 var _creator: Node
 var _dirty := false
-var _current_type: Node
+var _current_type: DataType
 
 
 # =============================================================
@@ -36,9 +37,9 @@ func edit(node: DataCreator) -> void:
 		_creator.child_order_changed.disconnect(_on_creator_child_order_changed)
 	_creator = node
 	__queue_fill_types()
-	Err.CONN(_creator.child_entered_tree, _on_creator_child_entered)
-	Err.CONN(_creator.child_exiting_tree, _on_creator_child_exiting)
-	Err.CONN(_creator.child_order_changed, _on_creator_child_order_changed)
+	Err.conn(_creator.child_entered_tree, _on_creator_child_entered)
+	Err.conn(_creator.child_exiting_tree, _on_creator_child_exiting)
+	Err.conn(_creator.child_order_changed, _on_creator_child_order_changed)
 
 
 func clear() -> void:
@@ -52,6 +53,7 @@ func clear() -> void:
 
 func _ready() -> void:
 	add_type.icon = EditorInterface.get_editor_theme().get_icon(&"Add", &"EditorIcons")
+	add_type_from_script.icon = EditorInterface.get_editor_theme().get_icon(&"ScriptCreate", &"EditorIcons")
 
 # =============================================================
 # ========= Virtual Methods ===================================
@@ -82,9 +84,9 @@ func __fill_types() -> void:
 		else:
 			row = preload("res://addons/true_data/data_creator/views/types_row.tscn").instantiate()
 			types_rows_box.add_child(row)
-			Err.CONN(row.script_pressed, _on_type_script_pressed)
-			Err.CONN(row.edit_pressed, _on_type_edit_pressed)
-			Err.CONN(row.delete_pressed, _on_type_delete_pressed)
+			Err.conn(row.script_pressed, _on_type_script_pressed)
+			Err.conn(row.edit_pressed, _on_type_edit_pressed)
+			Err.conn(row.delete_pressed, _on_type_delete_pressed)
 		row.set_type(n)
 		ntypes += 1
 	for i in range(_creator.get_child_count(), types_rows_box.get_child_count()):
@@ -125,8 +127,8 @@ func _on_type_script_pressed(type: DataType) -> void:
 	_current_type = type
 	file_dialog.filters = PackedStringArray(["*.gd ; GDScript"])
 	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-	Err.CONN(file_dialog.file_selected, _on_script_file_selected)
-	Err.CONN(file_dialog.canceled, _on_file_dialog_canceled)
+	Err.conn(file_dialog.file_selected, _on_script_file_selected)
+	Err.conn(file_dialog.canceled, _on_file_dialog_canceled)
 	file_dialog.popup_centered(Vector2i(600,540))
 
 
@@ -158,7 +160,11 @@ func _on_creator_child_order_changed() -> void:
 
 func _on_script_file_selected(path: String) -> void:
 	var script: Script = load(path) as Script
-	_current_type.data_script = script
+	undoredo.create_action("Data Script selected")
+	undoredo.add_do_property(_current_type, &"data_script", script)
+	undoredo.add_undo_property(_current_type, &"data_script", _current_type.data_script)
+	undoredo.add_undo_reference(_current_type.data_script)
+	undoredo.commit_action()
 	__disconnect_file_dialog()
 
 
@@ -174,3 +180,25 @@ func _on_add_type_pressed() -> void:
 	__add_type(new_type_name.text)
 	new_type_name.clear()
 	add_type.disabled = true
+
+
+func _on_add_type_from_script_pressed() -> void:
+	file_dialog.filters = PackedStringArray(["*.gd ; GDScript"])
+	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	Err.conn(file_dialog.file_selected, _on_new_script_file_selected)
+	Err.conn(file_dialog.canceled, _on_file_dialog_canceled)
+	file_dialog.popup_centered(Vector2i(600,540))
+
+
+func _on_new_script_file_selected(path: String) -> void:
+	pass
+	#var nm := type_name.validate_node_name().to_pascal_case()
+	#var type = DataType.new()
+	#type.name = nm
+#
+	#undoredo.create_action("Add Data Type")
+	#undoredo.add_do_method(_creator, "add_child", type, false)
+	#undoredo.add_do_method(type, "set_owner", _creator)
+	#undoredo.add_do_reference(type)
+	#undoredo.add_undo_method(_creator, "remove_child", type)
+	#undoredo.commit_action()

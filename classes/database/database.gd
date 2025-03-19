@@ -118,11 +118,15 @@ func __commit_query() -> void:
 			selection[ifield] = _field_list[ifield].name
 	var selected_fields: Array[Field] = []
 	Err.check_resize(selected_fields.resize(selection.size()))
+	var is_id_included := false
 	for ifield in selection.size():
 		var field := _field_map[selection[ifield]]
 		selected_fields[ifield] = field
-	#if _field_map.has(_query.get_id_name()):
-		#selected_fields.push_back(_field_map[_query.get_id_name()])
+		if field.name == _query.get_id_name():
+			is_id_included = true
+	var index_id := not _field_map.has(_query.get_id_name())
+	if not is_id_included and not index_id:
+		selected_fields.push_back(_field_map[_query.get_id_name()])
 	for i in indices:
 		var index0 := i * _record_length
 		var entry := {}
@@ -134,6 +138,8 @@ func __commit_query() -> void:
 			entry[field.name] = value
 			if field.name == _query.get_id_name():
 				id = value
+		if index_id:
+			entry[_query.get_id_name()] = i
 		_query._data[id] = entry
 	_query.commited.disconnect(_on_query_commited)
 

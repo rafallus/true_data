@@ -2,7 +2,7 @@
 extends Node
 
 ##
-## Contains function that help processing data.
+## Contains functions that help processing data.
 ##
 ## Extend this script to include all data used by the game for easy access from
 ## any script.
@@ -154,6 +154,15 @@ func obj_props_from_strings(object: Object, strings: PackedStringArray,
 ## properties to text format.
 func is_type_supported_text_format(type: int) -> bool:
 	return type in SUPPORTED_TYPES_TEXT
+
+
+func normalize(array: PackedFloat32Array, total: float = 1.0) -> void:
+	var sum := 0.0
+	for value in array:
+		sum += value
+	var v := total / sum
+	for i in array.size():
+		array[i] *= v
 
 
 # =============================================================
